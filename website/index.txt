@@ -1,0 +1,84 @@
+h1. fail fast
+
+
+h2. Description
+
+FailFast is a collection of assertion methods intended for lightweight contract checking.
+
+h2. Installing
+
+<pre>sudo gem install fail-fast</pre>
+
+h2. Synopsis
+
+<pre syntax="ruby">
+  def try
+    yield
+  rescue FailFast::AssertionFailureError
+    "<Assertion Failure>"
+  end
+
+  include FailFast::Assertions
+
+  try { assert(true) }            # => true
+  try { assert(false) }           # => "<Assertion Failure>"
+  try { assert(nil) }             # => "<Assertion Failure>"
+
+  # We can check multiple values at once
+  try { assert("foo", :bar, 42) } # => 42
+  try { assert(1, 2, nil) }       # => "<Assertion Failure>"
+
+  # assert_exists only checks for nil-ness - false is OK.
+  try { assert_exists(true) }     # => true
+  try { assert_exists(false) }    # => false
+  try { assert_exists(nil) }      # => "<Assertion Failure>"
+
+  # check further constraints after verifying the object is non-nil
+  try { assert_exists(99) {|n| n > 100 } } # => "<Assertion Failure>"
+
+  # Assert that a collection is non-empty
+  try { assert_one_or_more([1]) }         # => [1]
+  try { assert_one_or_more(:foo => :bar) } # => {:foo=>:bar}
+  try { assert_one_or_more([]) }           # => "<Assertion Failure>"
+
+  # #deny is the opposite of #assert
+  try {  deny(true) }             # => "<Assertion Failure>"
+  try { deny(false) }             # => false
+  try { deny(nil) }               # => nil
+
+  # Assert that an object is hash-like and contains non-nil values for given keys
+  h = {:foo => 1, :bar => 2, :baz => nil}
+  try { assert_keys(h, :foo, :bar) } # => {:foo=>1, :bar=>2, :baz=>nil}
+  try { assert_keys(h, :baz) }       # => "<Assertion Failure>"
+  try { assert_keys(h, :buz) }       # => "<Assertion Failure>"
+</pre>
+
+h2. Contributing
+
+<% if rubyforge_project_id %>
+
+* rubyforge: "http://rubyforge.org/scm/?group_id=<%= rubyforge_project_id %>":http://rubyforge.org/scm/?group_id=<%= rubyforge_project_id %>
+
+<pre>git clone git://rubyforge.org/fail-fast.git</pre>
+
+<% else %>
+
+* rubyforge: MISSING IN ACTION
+
+TODO - You can not created a RubyForge project, OR have not run <code>rubyforge config</code>
+yet to refresh your local rubyforge data with this projects' id information.
+
+When you do this, this message will magically disappear!
+
+Or you can hack website/index.txt and make it all go away!!
+
+<% end %>
+
+h2. License
+
+This code is free to use under the terms of the MIT license. 
+
+h2. Contact
+
+Questions, comments, suggestions, patches: email "Avdi Grimm":mailto:avdi@avdi.org
+

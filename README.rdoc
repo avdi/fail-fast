@@ -1,0 +1,87 @@
+= fail-fast
+
+* http://fail-fast.rubyforge.org
+
+== DESCRIPTION:
+
+FailFast is a collection of assertion methods intended for lightweight contract checking.
+
+== FEATURES/PROBLEMS:
+
+* TODO More documentation
+
+== SYNOPSIS:
+
+  def try
+    yield
+  rescue FailFast::AssertionFailureError
+    "<Assertion Failure>"
+  end
+
+  include FailFast::Assertions
+
+  try { assert(true) }            # => true
+  try { assert(false) }           # => "<Assertion Failure>"
+  try { assert(nil) }             # => "<Assertion Failure>"
+
+  # We can check multiple values at once
+  try { assert("foo", :bar, 42) } # => 42
+  try { assert(1, 2, nil) }       # => "<Assertion Failure>"
+
+  # assert_exists only checks for nil-ness - false is OK.
+  try { assert_exists(true) }     # => true
+  try { assert_exists(false) }    # => false
+  try { assert_exists(nil) }      # => "<Assertion Failure>"
+
+  # check further constraints after verifying the object is non-nil
+  try { assert_exists(99) {|n| n > 100 } } # => "<Assertion Failure>"
+
+  # Assert that a collection is non-empty
+  try { assert_one_or_more([1]) }         # => [1]
+  try { assert_one_or_more(:foo => :bar) } # => {:foo=>:bar}
+  try { assert_one_or_more([]) }           # => "<Assertion Failure>"
+
+  # #deny is the opposite of #assert
+  try {  deny(true) }             # => "<Assertion Failure>"
+  try { deny(false) }             # => false
+  try { deny(nil) }               # => nil
+
+  # Assert that an object is hash-like and contains non-nil values for given keys
+  h = {:foo => 1, :bar => 2, :baz => nil}
+  try { assert_keys(h, :foo, :bar) } # => {:foo=>1, :bar=>2, :baz=>nil}
+  try { assert_keys(h, :baz) }       # => "<Assertion Failure>"
+  try { assert_keys(h, :buz) }       # => "<Assertion Failure>"
+  
+
+== REQUIREMENTS:
+
+* None!
+
+== INSTALL:
+
+* sudo gem install fail-fast
+
+== LICENSE:
+
+(The MIT License)
+
+Copyright (c) 2008 Avdi Grimm
+
+Permission is hereby granted, free of charge, to any person obtaining
+a copy of this software and associated documentation files (the
+'Software'), to deal in the Software without restriction, including
+without limitation the rights to use, copy, modify, merge, publish,
+distribute, sublicense, and/or sell copies of the Software, and to
+permit persons to whom the Software is furnished to do so, subject to
+the following conditions:
+
+The above copyright notice and this permission notice shall be
+included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED 'AS IS', WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
+CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
