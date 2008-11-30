@@ -48,6 +48,15 @@ module FailFast
       hash
     end
 
+    # Assert that +object+ responds to +messages+.  Returns +object+.
+    def assert_respond_to(object, *messages)
+      messages.each do |message|
+        assert(object.respond_to?(message))
+      end
+      assert(yield(object)) if block_given?
+      object
+    end
+
     private
 
     def iterate_and_return_last(values, block = nil)

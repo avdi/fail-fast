@@ -3,7 +3,7 @@ Manifest.txt
 PostInstall.txt
 README.rdoc
 Rakefile
-config/website.yml.sample
+config/website.yml
 lib/fail_fast.rb
 script/console
 script/destroy

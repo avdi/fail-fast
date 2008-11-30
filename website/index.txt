@@ -3,7 +3,7 @@ h1. fail fast
 
 h2. Description
 
-FailFast is a collection of assertion methods intended for lightweight contract checking.
+FailFast is a collection of assertion methods intended for lightweight contract checking.  
 
 h2. Installing
 
@@ -53,7 +53,26 @@ h2. Synopsis
   try { assert_keys(h, :buz) }       # => "<Assertion Failure>"
 </pre>
 
-h2. Contributing
+h2. Rationale
+
+Unexpected <tt>nil</tt>s and other bad values will usually bring a Ruby program down eventually, but the actual point of failure might be deep down the call stack and the error message less than revealing.  Judicious use of FailFast assertions to check your assumptions can ensures that the program will end as soon as a contract violation is detected, with a stack trace that points directly at the assertion which failed.
+
+One of the primary goals of FailFast is to make assumption-checking declarative.  Assumption checking should be simple and concise so that we can get to the meat of a method without getting bogged down in verifications.  At the same time, FailFast is <em>lightweight</em>.  It is not a metaprogrammed Design-by-Contract DSL.  It is a simple set of shorthand methods for validating values.
+
+It is not the intent of FailFast to have specialized assertions for every eventuality.  Rather, it seeks to cover a few common cases where there is a potential for significantly increased clarity and declarativeness.
+
+h2. Features
+
+* Fully spec'd/tested.
+* In most cases assertions return their last argument.  This makes it easy to check values inline.  For instance: <code>assert_exists(obj).foo()</code>
+* Most assertions can take a block where a further boolean check can be performed. For instance, use <code>assert_exists(x) { x.predicate? }</code> to check first that <code>x</code> is not nil, and then that it satisfies a predicate.
+* <tt>AssertionFailure</tt> derives directly from <tt>Exception</tt> so that it will never be silently eaten by no-argument <tt>catch</tt> statements.
+
+h2. Documentation
+
+See the <a href="http://fail-fast.rubyforge.org/rdoc/">RDoc</a>.
+
+h2. Source
 
 <% if rubyforge_project_id %>
 

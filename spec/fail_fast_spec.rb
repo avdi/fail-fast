@@ -277,6 +277,37 @@ describe FailFast::Assertions, "#assert_keys" do
   end
 end
 
+describe FailFast::Assertions, "#assert_respond_to" do
+  include FailFast::Assertions
+
+  def do_assertion(object, &block)
+    assert_respond_to(object, :size, &block)
+  end
+
+  def do_success(&block)
+    assert_respond_to("foo", :size, &block)
+  end
+
+  def do_failure(&block)
+    assert_respond_to("foo", :bar, &block)
+  end
+
+  before :each do
+    @success_values = [[], ""]
+    @failure_values = [nil]
+  end
+
+  it_should_behave_like "any assertion"
+  it_should_behave_like "a basic assertion"
+  it_should_behave_like "an assertion taking a block"
+
+  it "should fail if ANY messages are not supported" do
+    lambda do
+      assert_respond_to("foo", :size, :bar)
+    end.should raise_error(FailFast::AssertionFailureError)
+  end
+end
+
 describe FailFast::AssertionFailureError do
   it "should derive from Exception" do
     FailFast::AssertionFailureError.superclass.should equal(Exception)

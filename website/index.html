@@ -83,20 +83,30 @@
   <span class="ident">try</span> <span class="punct">{</span> <span class="ident">assert_keys</span><span class="punct">(</span><span class="ident">h</span><span class="punct">,</span> <span class="symbol">:baz</span><span class="punct">)</span> <span class="punct">}</span>       <span class="comment"># =&gt; &quot;&lt;Assertion Failure&gt;&quot;</span>
   <span class="ident">try</span> <span class="punct">{</span> <span class="ident">assert_keys</span><span class="punct">(</span><span class="ident">h</span><span class="punct">,</span> <span class="symbol">:buz</span><span class="punct">)</span> <span class="punct">}</span>       <span class="comment"># =&gt; &quot;&lt;Assertion Failure&gt;&quot;</span>
 </pre></p>
-<h2>Contributing</h2>
+<h2>Rationale</h2>
+<p>Unexpected <tt>nil</tt>s and other bad values will usually bring a Ruby program down eventually, but the actual point of failure might be deep down the call stack and the error message less than revealing.  Judicious use of FailFast assertions to check your assumptions can ensures that the program will end as soon as a contract violation is detected, with a stack trace that points directly at the assertion which failed.</p>
+<p>One of the primary goals of FailFast is to make assumption-checking declarative.  Assumption checking should be simple and concise so that we can get to the meat of a method without getting bogged down in verifications.  At the same time, FailFast is <em>lightweight</em>.  It is not a metaprogrammed Design-by-Contract <span class="caps">DSL</span>.  It is a simple set of shorthand methods for validating values.</p>
+<p>It is not the intent of FailFast to have specialized assertions for every eventuality.  Rather, it seeks to cover a few common cases where there is a potential for significantly increased clarity and declarativeness.</p>
+<h2>Features</h2>
 <ul>
-	<li>rubyforge: <span class="caps">MISSING</span> IN <span class="caps">ACTION</span></li>
+	<li>Fully spec&#8217;d/tested.</li>
+	<li>In most cases assertions return their last argument.  This makes it easy to check values inline.  For instance: <code>assert_exists(obj).foo()</code></li>
+	<li>Most assertions can take a block where a further boolean check can be performed. For instance, use <code>assert_exists(x) { x.predicate? }</code> to check first that <code>x</code> is not nil, and then that it satisfies a predicate.</li>
+	<li><tt>AssertionFailure</tt> derives directly from <tt>Exception</tt> so that it will never be silently eaten by no-argument <tt>catch</tt> statements.</li>
 </ul>
-<p><span class="caps">TODO</span> &#8211; You can not created a RubyForge project, OR have not run <code>rubyforge config</code><br />
-yet to refresh your local rubyforge data with this projects&#8217; id information.</p>
-<p>When you do this, this message will magically disappear!</p>
-<p>Or you can hack website/index.txt and make it all go away!!</p>
+<h2>Documentation</h2>
+<p>See the <a href="http://fail-fast.rubyforge.org/rdoc/">RDoc</a>.</p>
+<h2>Source</h2>
+<ul>
+	<li>rubyforge: <a href="http://rubyforge.org/scm/?group_id=7409">http://rubyforge.org/scm/?group_id=7409</a></li>
+</ul>
+<pre>git clone git://rubyforge.org/fail-fast.git</pre>
 <h2>License</h2>
 <p>This code is free to use under the terms of the <span class="caps">MIT</span> license.</p>
 <h2>Contact</h2>
 <p>Questions, comments, suggestions, patches: email <a href="mailto:avdi@avdi.org">Avdi Grimm</a></p>
     <p class="coda">
-      <a href="avdi@avdi.org">Avdi Grimm</a>, 29th November 2008<br>
+      <a href="avdi@avdi.org">Avdi Grimm</a>, 30th November 2008<br>
       Theme extended from <a href="http://rb2js.rubyforge.org/">Paul Battley</a>
     </p>
 </div>
