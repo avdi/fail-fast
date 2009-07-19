@@ -277,6 +277,77 @@ describe FailFast::Assertions, "#assert_keys" do
   end
 end
 
+describe FailFast::Assertions, "#assert_only_keys" do
+
+  include FailFast::Assertions
+
+  def do_assertion(*args, &block)
+    assert_only_keys(*args, &block)
+  end
+
+  def do_success(&block)
+    assert_only_keys({:foo => true}, :foo, &block)
+  end
+
+  def do_failure(&block)
+    assert_only_keys({:foo, :bar}, :foo, &block)
+  end
+
+  it_should_behave_like "any assertion"
+  it_should_behave_like "an assertion taking a block"
+
+  it "should fail if an unspecified key is present" do
+    lambda { assert_only_keys({:bar => true}, :foo) }.
+      should raise_error(FailFast::AssertionFailureError)
+  end
+
+  it "should fail if the given hash is nil" do
+    lambda do
+      assert_only_keys(nil)
+    end.should raise_error(FailFast::AssertionFailureError)
+  end
+
+  it "should fail if given something unlike a hash" do
+    lambda do
+      assert_only_keys(true)
+    end.should raise_error(FailFast::AssertionFailureError)
+  end
+
+  it "should always fail if no keys are given" do
+    lambda do
+      assert_only_keys({:foo => true, :bar => nil})
+    end.should raise_error(FailFast::AssertionFailureError)
+  end
+
+  it "should yield values of keys which are present" do
+    did_yield = false
+    assert_only_keys({:foo => 23}, :foo, :bar) do |x, y|
+      did_yield = true
+      x.should == 23
+      y.should be_nil
+      true
+    end
+    did_yield.should be_true
+  end
+
+  it "should yield nothing if a key is wrong" do
+    begin
+      did_yield = false
+      assert_only_keys({:foo => 23, :baz => 32}, :foo, :bar) do |x, y|
+        did_yield = true
+      end
+    rescue FailFast::AssertionFailureError
+      did_yield.should be_false
+    end
+  end
+
+  it "should return the hash" do
+    @hash = { :buz => 42 }
+    assert_only_keys(@hash, :buz).should equal(@hash)
+  end
+end
+
+
 describe FailFast::Assertions, "#assert_respond_to" do
   include FailFast::Assertions
 

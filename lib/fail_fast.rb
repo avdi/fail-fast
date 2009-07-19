@@ -2,7 +2,7 @@ $:.unshift(File.dirname(__FILE__)) unless
   $:.include?(File.dirname(__FILE__)) || $:.include?(File.expand_path(File.dirname(__FILE__)))
 
 module FailFast
-  VERSION = '1.0.0'
+  VERSION = '1.1.0'
 
   class AssertionFailureError < Exception
   end
@@ -44,6 +44,18 @@ module FailFast
       assert_exists(hash)
       assert(hash.respond_to?(:[]))
       values = keys.inject([]) { |vals, k| vals << assert_exists(hash[k]) }
+      assert(yield(*values)) if block_given?
+      hash
+    end
+
+    # Assert that +hash+ exists, responds to #[], and has no keys other than
+    # +keys+.  Returns +hash+.
+    def assert_only_keys(hash, *keys)
+      assert_exists(hash)
+      assert(hash.respond_to?(:[]))
+      values = hash.inject([]) { |vals, (k, v)| 
+        assert(keys.include?(k)); vals << hash[k] 
+      }
       assert(yield(*values)) if block_given?
       hash
     end

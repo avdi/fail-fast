@@ -51,7 +51,11 @@ FailFast is a collection of assertion methods intended for lightweight contract 
   try { assert_keys(h, :foo, :bar) } # => {:foo=>1, :bar=>2, :baz=>nil}
   try { assert_keys(h, :baz) }       # => "<Assertion Failure>"
   try { assert_keys(h, :buz) }       # => "<Assertion Failure>"
-  
+
+  # Assert that an object is hash-like and has only the given keys
+  h = {:foo => 1, :bar => nil}
+  try { assert_keys(h, :foo, :bar) } # => {:foo => 1, :bar => nil}
+  try { assert_keys(h, :foo) }       # => "<Assertion Failure>"
 
 == REQUIREMENTS:
 
