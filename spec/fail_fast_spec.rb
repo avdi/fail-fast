@@ -290,7 +290,7 @@ describe FailFast::Assertions, "#assert_only_keys" do
   end
 
   def do_failure(&block)
-    assert_only_keys({:foo, :bar}, :foo, &block)
+    assert_only_keys({:foo => :bar}, :foo, &block)
   end
 
   it_should_behave_like "any assertion"
